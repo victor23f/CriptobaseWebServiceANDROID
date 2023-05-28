@@ -1,9 +1,11 @@
 package com.example.criptobasewebservice.conexionHTTP;
 
 public interface Constantes {
-
+    final String VALIDARPASSWORD = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^\\w\\d\\s])[^\\s]{5,}$";
+    final String VALIDAR_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    final String VALIDAR_TELEFONO_ESPAÑA = "(\\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}";
     public static final String SERVERUSUARIO = "http://192.168.1.129/Criptobase/";
-
+    final static String ipConexion = "192.168.1.129";
     public static final String URL_LOGUEO_CLIENTE = SERVERUSUARIO + "loginClientes.php";
     public static final String URL_LOGUEO_ADMIN = SERVERUSUARIO + "loginAdmin.php";
 

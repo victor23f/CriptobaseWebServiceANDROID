@@ -1,7 +1,5 @@
 package com.example.criptobasewebservice.Modelo;
 
-import com.example.criptobasewebservice.Modelo.Persona;
-
 import java.io.Serializable;
 
 public class Usuario extends Persona implements Serializable {

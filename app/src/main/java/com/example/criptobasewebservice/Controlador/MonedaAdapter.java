@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.criptobasewebservice.Modelo.Moneda;
 import com.example.criptobasewebservice.R;
 
@@ -55,8 +57,32 @@ public class MonedaAdapter extends BaseAdapter {
         holder.textViewToken.setText(moneda.getToken());
         holder.textViewPrecio.setText(String.valueOf(moneda.getPrecio() + "$"));
 
+        int backgroundColor = determinarColorFondo(position);
+        int textColor = determinarColorTexto(position);
+
+        convertView.setBackgroundColor(backgroundColor);
+        holder.textViewToken.setTextColor(textColor);
+        holder.textViewPrecio.setTextColor(textColor);
+
         return convertView;
     }
+
+    private int determinarColorFondo(int position) {
+        if (position % 2 == 0) {
+            return ContextCompat.getColor(context, R.color.purple);
+        } else {
+            return ContextCompat.getColor(context, R.color.white);
+        }
+    }
+
+    private int determinarColorTexto(int position) {
+        if (position % 2 == 0) {
+            return ContextCompat.getColor(context, R.color.white);
+        } else {
+            return ContextCompat.getColor(context, R.color.purple);
+        }
+    }
+
 
     private static class ViewHolder {
         TextView textViewToken;

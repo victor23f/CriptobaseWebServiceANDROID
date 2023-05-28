@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".Controlador.MainActivity">
+    tools:context=".vista.MainActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:id="@+id/loginButton"
-                android:onClick="insertarPersona"
+                android:onClick="comprobarCampos"
                 android:text="Registrar"
                 android:textSize="18sp"
                 android:layout_marginTop="30dp"

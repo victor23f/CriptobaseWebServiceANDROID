@@ -1,26 +1,19 @@
-package com.example.criptobasewebservice.Controlador;
+package com.example.criptobasewebservice.vista;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.criptobasewebservice.Modelo.Admin;
 import com.example.criptobasewebservice.Modelo.Usuario;
 import com.example.criptobasewebservice.R;
 import com.example.criptobasewebservice.conexionHTTP.Constantes;
-import com.example.criptobasewebservice.conexionHTTP.HttpClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,8 +24,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
-    final String ipConexion="192.168.1.129";
+public class MainActivity extends AppCompatActivity  implements Constantes{
     EditText username;
     EditText password;
     Button loginButton;
@@ -54,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Intent ventanaRegistro = new Intent(MainActivity.this, Registro.class);
         startActivity(ventanaRegistro);
     }
+
     public void logear(View vista) {
         MainActivity mensaje = new MainActivity();
         class InsertarAsyncTask extends AsyncTask<String, Void, String> {

@@ -1,7 +1,8 @@
-package com.example.criptobasewebservice.Controlador;
+package com.example.criptobasewebservice.vista;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.criptobasewebservice.Modelo.Usuario;
 import com.example.criptobasewebservice.R;
+import com.example.criptobasewebservice.conexionHTTP.Constantes;
 
 import org.json.JSONObject;
 
@@ -20,12 +22,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Registro extends AppCompatActivity {
+public class Registro extends AppCompatActivity implements Constantes {
 
-    final String ipConexion="192.168.1.129";
-    EditText username,password,nombre,apellidos,telefono,email;
+    final String ipConexion = "192.168.1.129";
+    EditText username, password, nombre, apellidos, telefono, email;
 
     TextView registerButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +42,28 @@ public class Registro extends AppCompatActivity {
 
         registerButton = findViewById(R.id.loginButton);
     }
-    public void insertarPersona(View vista) {
+
+    public void comprobarCampos(View vista) {
+        if (username.getText().toString().trim().length() == 0 || password.getText().toString().trim().length() == 0 || nombre.getText().toString().trim().length() == 0 || apellidos.getText().toString().trim().length() == 0 || telefono.getText().toString().trim().length() == 0 || email.getText().toString().trim().length() == 0 ) {
+            Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
+        }else{
+            if (password.getText().toString().matches(VALIDARPASSWORD)){
+                if (email.getText().toString().matches(VALIDAR_EMAIL)) {
+                    if (("34" + telefono.getText()).toString().matches(VALIDAR_TELEFONO_ESPAÑA)){
+                        insertarPersona();
+                    }else{
+                        Toast.makeText(this, "Introduce un teléfono válido", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(this, "Introduce un email válido", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "La contraseña no cumple los requisitos de seguridad", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void insertarPersona() {
         Registro mensaje = new Registro();
         class insertarAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -74,11 +98,12 @@ public class Registro extends AppCompatActivity {
                     response.append(lineaEntrada);
                 }
                 in.close();
-
+                if (response.toString().contains("El usuario ya existe")) {
+                    response = null;
+                }
                 // Devolver la respuesta del archivo PHP
                 return response.toString();
             }
-
 
 
             @Override
@@ -86,7 +111,7 @@ public class Registro extends AppCompatActivity {
                 // String nombre = strings[0];
                 // String definicion = strings[1];
                 try {
-                    return insertarData(new Usuario(username.getText().toString(), password.getText().toString(), nombre.getText().toString(), apellidos.getText().toString(),telefono.getText().toString(), email.getText().toString()));
+                    return insertarData(new Usuario(username.getText().toString(), password.getText().toString(), nombre.getText().toString(), apellidos.getText().toString(), telefono.getText().toString(), email.getText().toString()));
                 } catch (Exception e) {
                     return null;
                 }
@@ -100,14 +125,15 @@ public class Registro extends AppCompatActivity {
                     mensaje.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(Registro.this, "Insertada correctamente", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(Registro.this, MainActivity.class);
+                            startActivity(i);
                         }
                     });
                 } else {
                     mensaje.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(Registro.this, "Error en la inserción", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Registro.this, "Ya existe ese nombre de usuario", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
