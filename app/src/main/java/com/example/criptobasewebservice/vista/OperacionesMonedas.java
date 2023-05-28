@@ -86,10 +86,10 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                         if (cantidadDolares.getText().toString().equals("")) {
                         } else {
                             double cantidad = Double.parseDouble(cantidadDolares.getText().toString());
-                            comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), cantidad));
-                            double cantidadMonedas = cantidad / listaMonedas.get(posicion).getPrecio();
                             // Realizar las acciones necesarias con la cantidad introducida
                             if (cantidad != 0 && (cantidad < saldoUsuario || cantidad == saldoUsuario)) {
+                                comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), cantidad/ listaMonedas.get(posicion).getPrecio()));
+                                double cantidadMonedas = cantidad / listaMonedas.get(posicion).getPrecio();
                                 GestionCompras.actualizarSaldo(usuario, (saldoUsuario - cantidad));
                                 Toast.makeText(OperacionesMonedas.this, "Compra realizada correctamente", Toast.LENGTH_SHORT).show();
                             } else {
@@ -111,7 +111,7 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                             // Realizar las acciones necesarias con la cantidad introducida
                             if (cantidadMonedaUsuario >cantidadMonedas) {
                                 GestionCompras.actualizarSaldo(usuario, (saldoUsuario + (cantidadMonedas * listaMonedas.get(posicion).getPrecio())));
-                                comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), -cantidad));
+                                comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), -cantidadMonedas));
                                 Toast.makeText(OperacionesMonedas.this, "Venta realizada correctamente", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(OperacionesMonedas.this, "No se ha podido realizar la venta, monedas insuficientes", Toast.LENGTH_SHORT).show();
