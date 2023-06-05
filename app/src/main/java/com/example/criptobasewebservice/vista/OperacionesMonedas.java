@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -72,9 +74,11 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
+
+
         // Configurar el EditText para aceptar solo números (incluyendo decimales)
         cantidadDolares.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        cantidadDolares.setHint("Introduce la cantidad");
+        cantidadDolares.setHint("Introduce la cantidad en dolares");
 
         layout.addView(cantidadDolares);
         builder.setView(layout);
@@ -84,8 +88,19 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
         } else {
             cantidadMonedasFormateadas = String.format("%.2f", cantidadMonedaUsuario);
         }
+        float smallTextSize = 0.825f;
 
-        builder.setTitle("Tienes: " + cantidadMonedasFormateadas + " de " + listaMonedas.get(posicion).getToken() + "                            Valor de la moneda: " + listaMonedas.get(posicion).getPrecio() + "$")
+// Crear el texto con diferentes tamaños de fuente
+        String titleText = "Tienes: " + cantidadMonedasFormateadas + " " + listaMonedas.get(posicion).getToken()
+                + "   equivale a: " + String.format("%.1f", cantidadMonedaUsuario * listaMonedas.get(posicion).getPrecio())
+                + "$               Valor de la moneda: " + listaMonedas.get(posicion).getPrecio() + "$";
+
+        SpannableString spannableString = new SpannableString(titleText);
+
+// Establecer el tamaño de fuente más pequeño para el texto adicional
+        spannableString.setSpan(new RelativeSizeSpan(smallTextSize), titleText.indexOf("Tienes:"), titleText.length(), 0);
+
+        builder.setTitle(spannableString)
                 .setPositiveButton("Comprar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
