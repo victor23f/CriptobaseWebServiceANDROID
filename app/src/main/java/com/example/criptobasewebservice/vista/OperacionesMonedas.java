@@ -332,7 +332,7 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                         JSONObject jsonResponse = new JSONObject(s);
                         if (jsonResponse.has("saldo")) {
                             saldoUsuario = jsonResponse.getDouble("saldo");
-                            saldoText.setText("SALDO:    " + saldoUsuario + "$");
+                            saldoText.setText("SALDO: " + saldoUsuario + "$");
 
                             // Haz algo con el saldo obtenido
                         } else if (jsonResponse.has("error")) {
