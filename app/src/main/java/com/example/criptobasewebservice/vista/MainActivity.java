@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.criptobasewebservice.Controlador.login;
 import com.example.criptobasewebservice.Modelo.Usuario;
 import com.example.criptobasewebservice.R;
 import com.example.criptobasewebservice.conexionHTTP.Constantes;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity  implements Constantes{
                 // Crear el objeto JSON con los datos a enviar
                 JSONObject postData = new JSONObject();
                 postData.put("usuario", usuario.getUsuario());
-                postData.put("password", usuario.getPassword());
+                postData.put("password", login.getMD5(usuario.getPassword()));
 
                 // Crear la URL de la API
                 URL url = new URL("http://" + ipConexion + "/Criptobase/loginClientes.php");

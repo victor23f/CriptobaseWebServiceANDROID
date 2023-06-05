@@ -78,8 +78,14 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
 
         layout.addView(cantidadDolares);
         builder.setView(layout);
-        actualizaCantidadDeMoneda(usuario,listaMonedas.get(posicion).getToken());
-        builder.setTitle("COMPRA/VENTA: " + listaMonedas.get(posicion).getToken() + "  " + listaMonedas.get(posicion).getPrecio() + "$")
+        String cantidadMonedasFormateadas;
+        if (listaMonedas.get(posicion).getPrecio() > 10000) {
+            cantidadMonedasFormateadas = String.format("%.7f", cantidadMonedaUsuario);
+        } else {
+            cantidadMonedasFormateadas = String.format("%.2f", cantidadMonedaUsuario);
+        }
+
+        builder.setTitle("Tienes: " + cantidadMonedasFormateadas + " de " + listaMonedas.get(posicion).getToken() + "                            Valor de la moneda: " + listaMonedas.get(posicion).getPrecio() + "$")
                 .setPositiveButton("Comprar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -88,7 +94,7 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                             double cantidad = Double.parseDouble(cantidadDolares.getText().toString());
                             // Realizar las acciones necesarias con la cantidad introducida
                             if (cantidad != 0 && (cantidad < saldoUsuario || cantidad == saldoUsuario)) {
-                                comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), cantidad/ listaMonedas.get(posicion).getPrecio()));
+                                comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), cantidad / listaMonedas.get(posicion).getPrecio()));
                                 double cantidadMonedas = cantidad / listaMonedas.get(posicion).getPrecio();
                                 GestionCompras.actualizarSaldo(usuario, (saldoUsuario - cantidad));
                                 Toast.makeText(OperacionesMonedas.this, "Compra realizada correctamente", Toast.LENGTH_SHORT).show();
@@ -109,7 +115,7 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
 
                             double cantidadMonedas = cantidad / listaMonedas.get(posicion).getPrecio();
                             // Realizar las acciones necesarias con la cantidad introducida
-                            if (cantidadMonedaUsuario >cantidadMonedas) {
+                            if (cantidadMonedaUsuario > cantidadMonedas) {
                                 GestionCompras.actualizarSaldo(usuario, (saldoUsuario + (cantidadMonedas * listaMonedas.get(posicion).getPrecio())));
                                 comprarMoneda(new Compra(listaMonedas.get(posicion).getToken(), usuario.getId(), -cantidadMonedas));
                                 Toast.makeText(OperacionesMonedas.this, "Venta realizada correctamente", Toast.LENGTH_SHORT).show();
@@ -125,8 +131,11 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                     }
                 });
         ;
-        actualizaCantidadDeMoneda(usuario,listaMonedas.get(posicion).getToken());
         return builder;
+    }
+
+    public interface OnActualizarCantidadListener {
+        void onActualizarCantidadExitoso();
     }
 
     public void listaDeMonedas(ArrayList<Moneda> monedasList) {
@@ -138,9 +147,21 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
         listaComp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mostrarCompraVentaMoneda(position).show();
+                actualizaCantidadDeMonedaListener(usuario, listaMonedas.get(position).getToken(), new OnActualizarCantidadListener() {
+                    @Override
+                    public void onActualizarCantidadExitoso() {
+                        mostrarCompraVentaMoneda(position).show();
+                    }
+                });
             }
         });
+    }
+
+    public void actualizaCantidadDeMonedaListener(Usuario usuario, String token, OnActualizarCantidadListener listener) {
+        actualizaCantidadDeMoneda(usuario, token, listener);
+
+        // Cuando la actualización sea exitosa, llama al método onActualizarCantidadExitoso() del listener
+
     }
 
     public void recogerMonedas() {
@@ -194,10 +215,12 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                     Toast.makeText(OperacionesMonedas.this, "Error al obtener las monedas", Toast.LENGTH_SHORT).show();
                 }
             }
+
         }
 
         ObtenerMonedasAsyncTask task = new ObtenerMonedasAsyncTask();
         task.execute();
+
     }
 
     public void comprarMoneda(Compra compra) {
@@ -330,14 +353,15 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
 
 
     }
-    public static void actualizaCantidadDeMoneda(Usuario usuario, String token) {
+
+    public static void actualizaCantidadDeMoneda(Usuario usuario, String token, OnActualizarCantidadListener listener) {
         class RetornarCantidadMonedaAsyncTask extends AsyncTask<Void, Void, String> {
 
             @Override
             protected String doInBackground(Void... voids) {
                 try {
                     // Crear la cadena de valores para la solicitud GET
-                    URL url = new URL("http://" + ipConexion + "/Criptobase/retornaCantidadMoneda.php?usuario_id=" + usuario.getId() + "&token="+token);
+                    URL url = new URL("http://" + ipConexion + "/Criptobase/retornaCantidadMoneda.php?usuario_id=" + usuario.getId() + "&token=" + token);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setRequestProperty("Content-Type", "application/json");
@@ -354,7 +378,6 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                     reader.close();
 
 
-
                     return response.toString();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -367,8 +390,7 @@ public class OperacionesMonedas extends AppCompatActivity implements Constantes 
                 try {
                     JSONObject json = new JSONObject(result);
                     cantidadMonedaUsuario = json.getDouble("cantidad");
-                    System.out.println(cantidadMonedaUsuario);
-                    System.out.println(json.getDouble("cantidad"));
+                    listener.onActualizarCantidadExitoso();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
