@@ -28,8 +28,6 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity  implements Constantes{
     EditText username;
     EditText password;
-    Button loginButton;
-    TextView registerButton;
     Usuario usuario;
 
 
@@ -79,8 +77,11 @@ public class MainActivity extends AppCompatActivity  implements Constantes{
                     response.append(lineaEntrada);
                 }
                 in.close();
-                // Devolver la respuesta del archivo PHP
-                return response.toString();
+
+                    // Devolver la respuesta del archivo PHP
+                    return response.toString();
+
+
 
             }
 
@@ -95,10 +96,10 @@ public class MainActivity extends AppCompatActivity  implements Constantes{
 
             @Override
             protected void onPostExecute(String s) {
-                if (s != null) {
+
                     try {
                         JSONObject jsonResponse = new JSONObject(s);
-                        if (jsonResponse.isNull("usuario")) {
+                        if (jsonResponse==null) {
                             mensaje.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -121,17 +122,16 @@ public class MainActivity extends AppCompatActivity  implements Constantes{
                             });
                         }
                     } catch (JSONException e) {
+                        mensaje.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "Error en el logueo", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
                         e.printStackTrace();
                     }
-                } else {
-                    mensaje.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Error en el logueo", Toast.LENGTH_SHORT).show();
 
-                        }
-                    });
-                }
             }
         }
 
